@@ -1,0 +1,12 @@
+{
+  "name": "Jamie's Claude Plugins",
+  "description": "Personal plugin marketplace for Claude Code",
+  "author": "Jamie Wilson",
+  "plugins": [
+    {
+      "name": "jira",
+      "path": "skills/jira",
+      "description": "Manages Atlassian products (JIRA and Confluence) via REST API"
+    }
+  ]
+}
