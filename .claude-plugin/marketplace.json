@@ -1,7 +1,10 @@
 {
   "name": "jamies-claude-plugins",
   "description": "Personal plugin marketplace for Claude Code",
-  "owner": "jamiewilson1977",
+  "owner": {
+    "name": "Jamie Wilson",
+    "github": "jamiewilson1977"
+  },
   "plugins": [
     {
       "name": "jira",
