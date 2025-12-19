@@ -9,11 +9,9 @@ This skill handles JIRA and Confluence operations via the Atlassian REST APIs. I
 
 ## Setup
 
-### 1. Install the wrapper script
+The wrapper script is located at `${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh`.
 
-Copy `atlassian-curl.sh` to your path or reference it directly from the plugin location.
-
-### 2. Configure keychain entries
+### Configure keychain entries
 
 **Authentication (required):**
 ```bash
@@ -41,7 +39,7 @@ security add-generic-password -s 'atlassian-config' -a 'jwilson' -w '{"domain":"
 
 Run the wrapper with no endpoint to see current config:
 ```bash
-atlassian-curl.sh
+${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh
 ```
 
 ---
@@ -49,19 +47,19 @@ atlassian-curl.sh
 ## Wrapper Script Usage
 
 ```bash
-atlassian-curl.sh <METHOD> <endpoint> [json-body]
+${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh <METHOD> <endpoint> [json-body]
 ```
 
 **Examples:**
 ```bash
 # GET request
-atlassian-curl.sh GET /rest/api/3/myself
+${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/myself
 
 # POST with JSON body
-atlassian-curl.sh POST /rest/api/3/issue '{"fields":{...}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue '{"fields":{...}}'
 
 # PUT with JSON body
-atlassian-curl.sh PUT /rest/api/3/issue/PROJ-123 '{"fields":{...}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh PUT /rest/api/3/issue/PROJ-123 '{"fields":{...}}'
 ```
 
 ---
@@ -83,11 +81,11 @@ atlassian-curl.sh PUT /rest/api/3/issue/PROJ-123 '{"fields":{...}}'
 
 **Note:** Issue type IDs may vary by instance. Query available types with:
 ```bash
-atlassian-curl.sh GET /rest/api/3/issuetype
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/issuetype
 ```
 
 ```bash
-atlassian-curl.sh POST /rest/api/3/issue '{
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue '{
   "fields": {
     "project": {"key": "{PROJECT}"},
     "summary": "{title}",
@@ -109,7 +107,7 @@ atlassian-curl.sh POST /rest/api/3/issue '{
 ## 2. Create Epic
 
 ```bash
-atlassian-curl.sh POST /rest/api/3/issue '{
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue '{
   "fields": {
     "project": {"key": "{PROJECT}"},
     "summary": "{epic title}",
@@ -128,7 +126,7 @@ atlassian-curl.sh POST /rest/api/3/issue '{
 ## 3. Link Ticket to Epic
 
 ```bash
-atlassian-curl.sh PUT /rest/api/3/issue/{TICKET_KEY} '{"fields":{"parent":{"key":"{EPIC_KEY}"}}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh PUT /rest/api/3/issue/{TICKET_KEY} '{"fields":{"parent":{"key":"{EPIC_KEY}"}}}'
 ```
 
 ---
@@ -136,7 +134,7 @@ atlassian-curl.sh PUT /rest/api/3/issue/{TICKET_KEY} '{"fields":{"parent":{"key"
 ## 4. Update Ticket
 
 ```bash
-atlassian-curl.sh PUT /rest/api/3/issue/{TICKET_KEY} '{
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh PUT /rest/api/3/issue/{TICKET_KEY} '{
   "fields": {
     "summary": "{new title}",
     "description": {
@@ -153,7 +151,7 @@ atlassian-curl.sh PUT /rest/api/3/issue/{TICKET_KEY} '{
 ## 5. Add Comment
 
 ```bash
-atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/comment '{
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/comment '{
   "body": {
     "type": "doc",
     "version": 1,
@@ -168,12 +166,12 @@ atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/comment '{
 
 **First, get available transitions:**
 ```bash
-atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}/transitions
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}/transitions
 ```
 
 **Then apply transition:**
 ```bash
-atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/transitions '{"transition":{"id":"{transition_id}"}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/transitions '{"transition":{"id":"{transition_id}"}}'
 ```
 
 ---
@@ -181,7 +179,7 @@ atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/transitions '{"transition"
 ## 7. Get Ticket Details
 
 ```bash
-atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}
 ```
 
 **Useful fields:** `fields.summary`, `fields.status.name`, `fields.assignee.displayName`, `fields.parent.key`
@@ -191,7 +189,7 @@ atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}
 ## 8. Search for Issues (JQL)
 
 ```bash
-atlassian-curl.sh POST /rest/api/3/search/jql '{"jql": "project={PROJECT} AND assignee=currentUser()", "maxResults": 10}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/search/jql '{"jql": "project={PROJECT} AND assignee=currentUser()", "maxResults": 10}'
 ```
 
 ---
@@ -199,7 +197,7 @@ atlassian-curl.sh POST /rest/api/3/search/jql '{"jql": "project={PROJECT} AND as
 ## 9. Search for Users
 
 ```bash
-atlassian-curl.sh GET '/rest/api/3/user/search?query={name}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET '/rest/api/3/user/search?query={name}'
 ```
 
 ---
@@ -211,7 +209,7 @@ atlassian-curl.sh GET '/rest/api/3/user/search?query={name}'
 **Extract page ID from URL:** `https://.../wiki/spaces/{space}/pages/{pageId}/{title}` → `{pageId}`
 
 ```bash
-atlassian-curl.sh GET '/wiki/api/v2/pages/{pageId}?body-format=storage'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET '/wiki/api/v2/pages/{pageId}?body-format=storage'
 ```
 
 **Response fields:** `title`, `body.storage.value` (HTML content)
@@ -221,7 +219,7 @@ atlassian-curl.sh GET '/wiki/api/v2/pages/{pageId}?body-format=storage'
 ## 2. Search Confluence
 
 ```bash
-atlassian-curl.sh GET '/wiki/rest/api/content/search?cql=text~"{searchTerm}"'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET '/wiki/rest/api/content/search?cql=text~"{searchTerm}"'
 ```
 
 ---
@@ -229,7 +227,7 @@ atlassian-curl.sh GET '/wiki/rest/api/content/search?cql=text~"{searchTerm}"'
 ## 3. List Pages in Space
 
 ```bash
-atlassian-curl.sh GET /wiki/api/v2/spaces/{spaceId}/pages
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /wiki/api/v2/spaces/{spaceId}/pages
 ```
 
 ---

@@ -3,13 +3,6 @@
   "version": "1.0.0",
   "description": "Manages Atlassian products (JIRA and Confluence) via REST API. Parameterized for multiple instances.",
   "author": {
-    "name": "Jamie Wilson",
-    "github": "jamiewilson1977"
-  },
-  "skills": [
-    {
-      "name": "jira",
-      "source": "./SKILL.md"
-    }
-  ]
+    "name": "Jamie Wilson"
+  }
 }
