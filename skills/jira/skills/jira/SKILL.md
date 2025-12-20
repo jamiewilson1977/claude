@@ -20,7 +20,7 @@ security add-generic-password -s 'atlassian-auth' -a 'jwilson' -w 'your-email@co
 
 **Configuration (required):**
 ```bash
-security add-generic-password -s 'atlassian-config' -a 'jwilson' -w '{"domain":"yourcompany.atlassian.net","project":"PROJ","issueTypeId":"10002","focusFieldId":"customfield_10695","focusValueId":"10452"}'
+security add-generic-password -s 'atlassian-config' -a 'jwilson' -w '{"domain":"yourcompany.atlassian.net","project":"PROJ","issueTypeId":"10002","focusFieldId":"customfield_10695","focusValueId":"10452","transitions":{"start":"21","done":"31","reopen":"11"}}'
 ```
 
 ### Config Fields
@@ -32,6 +32,7 @@ security add-generic-password -s 'atlassian-config' -a 'jwilson' -w '{"domain":"
 | issueTypeId | Default issue type ID | `10002` (Task) |
 | focusFieldId | Custom field ID for focus/team | `customfield_10695` |
 | focusValueId | Default focus value ID | `10452` |
+| transitions | Map of transition name to ID | `{"start":"21","done":"31"}` |
 
 ---
 
@@ -164,23 +165,21 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_K
 
 ## 6. Transition Status
 
-**Common Transition IDs (use these directly):**
-| Transition | ID | From Status |
-|------------|-----|-------------|
-| Start Progress | 21 | Open/To Do |
-| Done | 31 | Any |
-| Reopen | 11 | Done/Closed |
-| In Review | 51 | In Progress |
+**Use transition IDs from config** (stored in `transitions` field):
+- `start` - Begin work on ticket
+- `done` - Mark complete
+- `reopen` - Reopen closed ticket
 
-**Apply transition directly:**
+**Apply transition using config ID:**
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/transitions '{"transition":{"id":"31"}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/transitions '{"transition":{"id":"{transitions.done}"}}'
 ```
 
-**Only query transitions if the above IDs fail (404/400 error):**
+**Only query transitions if config ID fails or is missing:**
 ```bash
 ${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}/transitions
 ```
+Then update the user's keychain config with the correct IDs for future use.
 
 ---
 
@@ -269,11 +268,13 @@ To switch between Atlassian instances (e.g., Zylo vs IGG), update the config key
 # Delete existing
 security delete-generic-password -s 'atlassian-config' -a 'jwilson'
 
-# Add new config
-security add-generic-password -s 'atlassian-config' -a 'jwilson' -w '{"domain":"igg.atlassian.net","project":"IGG",...}'
+# Add new config (include instance-specific transition IDs)
+security add-generic-password -s 'atlassian-config' -a 'jwilson' -w '{"domain":"igg.atlassian.net","project":"IGG","issueTypeId":"10002","transitions":{"start":"21","done":"31","reopen":"11"}}'
 ```
 
 You may also need to update the auth entry if credentials differ between instances.
+
+**Tip:** To discover transition IDs for a new instance, query any ticket's transitions once and save the IDs to config.
 
 ---
 
