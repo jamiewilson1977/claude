@@ -9,7 +9,7 @@ This skill handles JIRA and Confluence operations via the Atlassian REST APIs. I
 
 ## Setup
 
-The wrapper script is located at `${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh`.
+The wrapper script is located at `${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh`.
 
 ### Configure keychain entries
 
@@ -39,7 +39,7 @@ security add-generic-password -s 'atlassian-config' -a 'jwilson' -w '{"domain":"
 
 Run the wrapper with no endpoint to see current config:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh
 ```
 
 ---
@@ -47,19 +47,19 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh
 ## Wrapper Script Usage
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh <METHOD> <endpoint> [json-body]
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh <METHOD> <endpoint> [json-body]
 ```
 
 **Examples:**
 ```bash
 # GET request
-${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/myself
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/myself
 
 # POST with JSON body
-${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue '{"fields":{...}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue '{"fields":{...}}'
 
 # PUT with JSON body
-${CLAUDE_PLUGIN_ROOT}/scripts/${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh PUT /rest/api/3/issue/PROJ-123 '{"fields":{...}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh PUT /rest/api/3/issue/PROJ-123 '{"fields":{...}}'
 ```
 
 ---
@@ -164,14 +164,22 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_K
 
 ## 6. Transition Status
 
-**First, get available transitions:**
+**Common Transition IDs (use these directly):**
+| Transition | ID | From Status |
+|------------|-----|-------------|
+| Start Progress | 21 | Open/To Do |
+| Done | 31 | Any |
+| Reopen | 11 | Done/Closed |
+| In Review | 51 | In Progress |
+
+**Apply transition directly:**
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}/transitions
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/transitions '{"transition":{"id":"31"}}'
 ```
 
-**Then apply transition:**
+**Only query transitions if the above IDs fail (404/400 error):**
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh POST /rest/api/3/issue/{TICKET_KEY}/transitions '{"transition":{"id":"{transition_id}"}}'
+${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KEY}/transitions
 ```
 
 ---
