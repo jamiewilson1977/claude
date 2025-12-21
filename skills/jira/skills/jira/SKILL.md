@@ -181,6 +181,8 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/atlassian-curl.sh GET /rest/api/3/issue/{TICKET_KE
 ```
 Then update the user's keychain config with the correct IDs for future use.
 
+**Do not verify status after transition.** The API response confirms success (204) or failure (4xx). A separate GET request to check the new status is unnecessary.
+
 ---
 
 ## 7. Get Ticket Details
