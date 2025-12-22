@@ -1,6 +1,6 @@
 {
   "name": "jira",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Manages Atlassian products (JIRA and Confluence) via REST API. Parameterized for multiple instances.",
   "author": {
     "name": "Jamie Wilson"
