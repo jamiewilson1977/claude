@@ -1,0 +1,6 @@
+{
+  "name": "apple-calendar",
+  "version": "0.1.0",
+  "description": "Manage Apple Calendar events with natural language",
+  "author": { "name": "Jamie Wilson" }
+}

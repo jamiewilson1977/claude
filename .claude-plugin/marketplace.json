@@ -10,6 +10,11 @@
       "name": "jira",
       "source": "./skills/jira",
       "description": "Manages Atlassian products (JIRA and Confluence) via REST API"
+    },
+    {
+      "name": "apple-calendar",
+      "source": "./plugins/apple-calendar",
+      "description": "Manage Apple Calendar events with natural language across all accounts (iCloud, Google, Exchange) via EventKit"
     }
   ]
 }
