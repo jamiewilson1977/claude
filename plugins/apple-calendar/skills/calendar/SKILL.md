@@ -5,15 +5,15 @@ description: Use when the user asks about their schedule, events, meetings, appo
 
 # Apple Calendar Skill
 
-Manage calendar events across all macOS Calendar accounts using a single EventKit-based script. No credentials needed — uses macOS system permissions. Events sync automatically to all devices.
+Manage calendar events across all macOS Calendar accounts using EventKit. No credentials needed — uses macOS system permissions. Events sync automatically to all devices.
+
+## How It Works
+
+This plugin provides an MCP server (`apple-calendar`) that runs locally and has full access to macOS EventKit. Use the MCP tools for all calendar operations. If MCP tools are unavailable, fall back to the CLI script.
 
 ## Calendars
 
-All calendars visible in Calendar.app are accessible. Run `calendars` to see what's available:
-
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py calendars
-```
+All calendars visible in Calendar.app are accessible. Use `mcp__apple-calendar__list_calendars` to see available calendars.
 
 ### Calendar Routing
 
@@ -24,87 +24,50 @@ python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py calendars
 | Default for new events | System default calendar |
 | Generic queries | All calendars |
 
-## Script
-
-All operations go through a single CLI:
-
-```
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py <command> [args]
-```
-
-All output is JSON: `{"success": true, ...}` or `{"success": false, "error": "..."}`.
-
-## Commands
+## MCP Tools
 
 ### List calendars
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py calendars
-```
+`mcp__apple-calendar__list_calendars` — no arguments.
 
 ### List events
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py list [--start-date YYYY-MM-DD] [--days 7] [--calendar "Name"]
-```
+`mcp__apple-calendar__list_events`:
+- `start_date`: ISO datetime (e.g. `2026-03-05T00:00:00`)
+- `end_date`: ISO datetime (e.g. `2026-03-05T23:59:59`)
+- `calendar_name`: Optional filter
 
-### Search events
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py search --query "text" [--days 90] [--calendar "Name"]
-```
-Searches title, notes, and location fields.
-
-### Add event
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py add \
-  --title "🏀 Event" \
-  --start "2026-03-05T14:00:00" \
-  --end "2026-03-05T15:00:00" \
-  [--calendar "Name"] \
-  [--location "Place"] \
-  [--notes "Details"] \
-  [--reminder 15] \
-  [--all-day] \
-  [--recurrence weekly --recurrence-days MO,WE,FR]
-```
+### Create event
+`mcp__apple-calendar__create_event` with `create_event_request`:
+- `title`, `start_time`, `end_time` (required)
+- `calendar_name`, `location`, `notes`, `all_day`, `alarms_minutes_offsets`, `recurrence_rule` (optional)
 
 ### Update event
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py update \
-  --event-id "ID" \
-  [--title "New Title"] [--start DT] [--end DT] \
-  [--calendar "Name"] [--location "Place"] [--notes "Notes"]
-```
+`mcp__apple-calendar__update_event`:
+- `event_id` (required)
+- `update_event_request` with optional fields to change
 
-### Delete event
+### Delete event (CLI only)
 ```bash
 python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py delete --event-id "ID"
 ```
 
-## Date & Time Formats
+## CLI Fallback
 
-| Format | Example | Type |
-|--------|---------|------|
-| Date only | `2026-03-05` | All-day event |
-| Date range | start: `2026-03-05`, end: `2026-03-08` | Multi-day (end exclusive) |
-| With time | `2026-03-05T14:00:00` | Timed event |
+If MCP tools are not available, use:
+```
+python3 ${CLAUDE_PLUGIN_ROOT}/scripts/calendar.py <command> [args]
+```
+Commands: `calendars`, `list`, `search`, `add`, `update`, `delete`
 
-- Date-only = all-day event
-- End date for all-day events is **exclusive** (June 11-14 → end: June 15)
-- Default duration for timed events: 1 hour
-- All times use the system local timezone
+## Date & Time
 
-## Recurrence
-
-| Pattern | Flags |
-|---------|-------|
-| Every day | `--recurrence daily` |
-| Every 2 weeks | `--recurrence weekly --recurrence-interval 2` |
-| Weekdays | `--recurrence weekly --recurrence-days MO,TU,WE,TH,FR` |
-| Monthly, 10 times | `--recurrence monthly --recurrence-count 10` |
-| Yearly until date | `--recurrence yearly --recurrence-end 2028-01-01` |
+- All dates use ISO format: `2026-03-05T14:00:00`
+- For day ranges: start at `T00:00:00`, end at `T23:59:59`
+- Default event duration: 1 hour
+- System local timezone is used automatically
 
 ## Emoji Selection
 
-Auto-select contextually appropriate emojis for event titles:
+Prepend a contextually appropriate emoji to event titles:
 
 | Category | Emojis |
 |----------|--------|
@@ -122,6 +85,4 @@ Auto-select contextually appropriate emojis for event titles:
 
 ## Permissions
 
-The script uses macOS EventKit, which requires calendar access:
-- First run will trigger a macOS permission dialog
-- If denied, go to **System Settings > Privacy & Security > Calendars** and enable access for Terminal / your IDE
+First run triggers a macOS permission dialog. If denied: **System Settings > Privacy & Security > Calendars** and enable access.

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "apple-calendar": {
+      "command": "mcp-ical",
+      "type": "stdio"
+    }
+  }
+}
