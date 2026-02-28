@@ -1,8 +1,7 @@
 {
   "mcpServers": {
     "apple-calendar": {
-      "command": "mcp-ical",
-      "type": "stdio"
+      "command": "/Library/Frameworks/Python.framework/Versions/3.12/bin/mcp-ical"
     }
   }
 }
