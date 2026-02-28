@@ -14,22 +14,42 @@ Usage:
 
 import argparse
 import json
+import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from threading import Semaphore
 
-from EventKit import (
-    EKAlarm,
-    EKEntityTypeEvent,
-    EKEvent,
-    EKEventStore,
-    EKRecurrenceDayOfWeek,
-    EKRecurrenceEnd,
-    EKRecurrenceRule,
-    EKSpanFutureEvents,
-    EKSpanThisEvent,
-)
-from Foundation import NSDate
+try:
+    from EventKit import (
+        EKAlarm,
+        EKEntityTypeEvent,
+        EKEvent,
+        EKEventStore,
+        EKRecurrenceDayOfWeek,
+        EKRecurrenceEnd,
+        EKRecurrenceRule,
+        EKSpanFutureEvents,
+        EKSpanThisEvent,
+    )
+    from Foundation import NSDate
+except ImportError:
+    print("Installing pyobjc-framework-EventKit...", file=sys.stderr)
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "pyobjc-framework-EventKit"],
+        stdout=sys.stderr, stderr=sys.stderr,
+    )
+    from EventKit import (
+        EKAlarm,
+        EKEntityTypeEvent,
+        EKEvent,
+        EKEventStore,
+        EKRecurrenceDayOfWeek,
+        EKRecurrenceEnd,
+        EKRecurrenceRule,
+        EKSpanFutureEvents,
+        EKSpanThisEvent,
+    )
+    from Foundation import NSDate
 
 # ---------------------------------------------------------------------------
 # Timezone helper
